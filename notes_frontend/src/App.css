@@ -1,104 +1,383 @@
-/* CSS Variables for Theme Management */
+/* Root theme and common variables */
 :root {
-  /* Light theme colors */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8f9fa;
-  --text-primary: #282c34;
-  --text-secondary: #61dafb;
-  --border-color: #e9ecef;
-  --button-bg: #007bff;
-  --button-text: #ffffff;
+  --primary: #1976d2;
+  --secondary: #424242;
+  --accent: #ffca28;
+
+  --bg: #fff;
+  --bg-sidebar: #f8f9fa;
+  --bg-note: #fcfcfc;
+  --border: #e0e0e0;
+
+  --text-main: #222;
+  --text-secondary: #888;
+
+  --fab-bg: var(--primary);
+  --fab-color: #fff;
+
+  --sidebar-width: 270px;
+  --sidebar-width-mobile: 64px;
+
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-[data-theme="dark"] {
-  /* Dark theme colors */
-  --bg-primary: #1a1a1a;
-  --bg-secondary: #282c34;
-  --text-primary: #ffffff;
-  --text-secondary: #61dafb;
-  --border-color: #404040;
-  --button-bg: #0056b3;
-  --button-text: #ffffff;
-}
-
-.App {
-  text-align: center;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+/* Reset some basic styles */
+body, html, #root, .notes-root {
+  height: 100%;
   min-height: 100vh;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text-main);
+  font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: var(--bg-secondary);
+/* Layout root */
+.notes-root {
+  display: flex;
   min-height: 100vh;
+}
+
+/* Sidebar navigation layout */
+.sidebar {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: var(--text-primary);
-  transition: background-color 0.3s ease;
   position: relative;
+  transition: width var(--transition), min-width var(--transition);
+  z-index: 2;
 }
 
-.App-link {
-  color: var(--text-secondary);
-  transition: color 0.3s ease;
+.sidebar-collapsed {
+  width: var(--sidebar-width-mobile) !important;
+  min-width: var(--sidebar-width-mobile) !important;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  padding: 22px 24px 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand-title {
+  font-size: 1.45rem;
+  letter-spacing: 1px;
+  color: var(--primary);
+  font-weight: 700;
+  margin: 0;
 }
 
 .theme-toggle {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background-color: var(--button-bg);
-  color: var(--button-text);
+  background: var(--accent);
+  color: var(--secondary);
   border: none;
+  padding: 7px 14px;
   border-radius: 8px;
-  padding: 10px 20px;
-  font-size: 14px;
+  font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-left: 7px;
+  outline: none;
+  transition: background 0.1s;
 }
-
 .theme-toggle:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  opacity: 0.9;
+  background: var(--primary);
+  color: #fff;
 }
 
-.theme-toggle:active {
-  transform: translateY(0);
+.notes-list-nav {
+  flex: 1 1 0%;
+  overflow-y: auto;
+  margin-top: 5px;
+  margin-bottom: 4.5em;
+}
+.notes-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.note-list-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  cursor: pointer;
+  padding: 13px 22px;
+  border-bottom: 1px solid var(--border);
+  transition: background var(--transition);
+  user-select: none;
+  outline: none;
+  border-left: 4px solid transparent;
+}
+.note-list-item.selected, .note-list-item:active, .note-list-item:focus {
+  background: var(--accent);
+  border-left: 4px solid var(--primary);
+  color: #222;
+}
+.note-title {
+  font-size: 1.07rem;
+  font-weight: 500;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+.note-date {
+  font-size: 0.81rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Empty state in sidebar for notes */
+.empty-list {
+  padding: 28px 18px 8px 18px;
+  color: #aaa;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Floating action button */
+.fab {
+  position: absolute;
+  bottom: 3.3em;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--fab-bg);
+  color: var(--fab-color);
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 3px 11px 0 rgba(25, 118, 210, 0.12);
+  width: 54px;
+  height: 54px;
+  font-size: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+  z-index: 10;
+}
+.fab:hover, .fab:focus {
+  background: var(--accent);
+  color: var(--primary);
+  box-shadow: 0 6px 16px rgba(25, 118, 210, 0.22);
+  outline: none;
+}
+
+.sidebar-footer {
+  padding: 9px 10px 3px 18px;
+  text-align: left;
+  color: var(--text-secondary);
+  font-size: 0.95em;
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+}
+
+/* Main area for note detail */
+.main-content {
+  flex: 1 1 0%;
+  background: var(--bg);
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0;
+}
+
+.welcome-container {
+  margin: auto;
+  text-align: center;
+  max-width: 500px;
+}
+.welcome-container h2 {
+  margin-top: 32px;
+  font-weight: 700;
+  font-size: 2.2rem;
+  color: var(--primary);
+}
+
+/* Note detail and edit area */
+.note-detail-section {
+  margin: 0 auto;
+  padding: 36px 18px;
+  max-width: 608px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.note-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 13px;
+}
+.back-btn, .edit-btn, .delete-btn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  padding: 7px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 1.12em;
+  transition: background 0.1s;
+  font-weight: 600;
+}
+.back-btn:hover, .edit-btn:hover, .delete-btn:hover {
+  background: var(--accent);
+  color: #34495e;
+}
+.delete-btn {
+  color: #be2222;
+  margin-left: auto;
+}
+
+/* Note editing form */
+.note-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--bg-note);
+  border-radius: 13px;
+  padding: 22px 16px 16px 16px;
+  box-shadow: 0 2px 9px rgba(25, 118, 210, 0.06);
+}
+
+.note-title-input {
+  font-size: 1.19em;
+  font-weight: 700;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  outline: none;
+}
+.note-title-input:focus {
+  border-color: var(--primary);
+  background: #f1f8ff;
+}
+.note-content-input {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 1.01em;
+  resize: vertical;
+  min-height: 138px;
+  outline: none;
+}
+.note-content-input:focus {
+  border-color: var(--primary);
+  background: #f1f8ff;
+}
+.form-actions {
+  display: flex;
+  gap: 9px;
+  justify-content: flex-end;
+}
+.save-btn {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 7px 16px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+}
+.save-btn:hover {
+  background: var(--accent);
+  color: var(--primary);
+}
+.cancel-btn {
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--primary);
+  border-radius: 5px;
+  padding: 7px 16px;
+  font-size: 1em;
+  cursor: pointer;
+}
+.cancel-btn:hover {
+  background: var(--border);
+  color: var(--secondary);
+}
+
+/* Note details (view mode) */
+.note-detail h2 {
+  margin: 0 0 9px 0;
+  font-size: 2.1em;
+  color: var(--primary);
+}
+.note-date.detail {
+  margin-bottom: 18px;
+  color: var(--text-secondary);
+  font-size: 0.99em;
+  font-style: italic;
+}
+.note-content {
+  background: #f7f7fb;
+  border-radius: 10px;
+  padding: 17px 12px;
+  font-size: 1.15em;
+  white-space: pre-wrap;
+  min-height: 90px;
+  word-break: break-word;
+  color: #222;
+}
+
+/* Responsive design */
+@media (max-width: 900px) {
+  .sidebar {
+    min-width: 170px !important;
+    width: 170px !important;
   }
-  to {
-    transform: rotate(360deg);
+  .sidebar-collapsed {
+    min-width: 50px !important;
+    width: 50px !important;
   }
 }
-
-/* Responsive design for mobile */
-@media (max-width: 768px) {
-  .theme-toggle {
-    top: 10px;
-    right: 10px;
-    padding: 8px 16px;
-    font-size: 12px;
+@media (max-width: 600px) {
+  .notes-root {
+    flex-direction: column;
+  }
+  .sidebar, .sidebar-collapsed {
+    width: 100vw !important;
+    min-width: 0 !important;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 56px;
+    flex-direction: row;
+    height: 70px;
+    align-items: center;
+    position: relative;
+  }
+  .fab {
+    position: fixed;
+    top: auto;
+    bottom: 25px;
+    left: auto;
+    right: 26px;
+    transform: none;
+    z-index: 199;
+  }
+  .main-content {
+    padding: 4vw;
+  }
+  .sidebar-header {
+    flex: 1 1 0%;
+    border-bottom: none;
+    padding: 10px 13px 10px 17px;
+  }
+  .notes-list-nav {
+    display: none;
+  }
+  .sidebar-footer {
+    display: none;
   }
 }
